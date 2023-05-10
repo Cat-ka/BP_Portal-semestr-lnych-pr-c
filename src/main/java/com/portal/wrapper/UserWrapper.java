@@ -17,15 +17,6 @@ public class UserWrapper {
     private String status;
     private String role;
 
-//    public UserWrapper(Integer id,  String email, String firstName, String lastName, String status) {
-//        this.id = id;
-//        this.email = email;
-//        this.name = firstName + " " + lastName;
-//        //this.firstName = firstName;
-//        //this.lastName = lastName;
-//        this.status = status;
-//    }
-
 
     public UserWrapper(Integer id, String name, String email, String status, String role) {
         this.id = id;

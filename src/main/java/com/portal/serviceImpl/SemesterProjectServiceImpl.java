@@ -16,13 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -222,12 +223,12 @@ public class SemesterProjectServiceImpl implements SemesterProjectService {
         return new ResponseEntity<>(new SemesterProjectWrapper(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<ByteArrayResource> downloadFile(Integer semesterProjectId) {
-        Optional<byte[]> fileDataOptional = getFileData(semesterProjectId);
+        Optional<Blob> fileDataOptional = getFileData(semesterProjectId);
 
         if (fileDataOptional.isPresent()) {
-            byte[] fileData = fileDataOptional.get();
+            Blob fileData = fileDataOptional.get();
             ByteArrayResource resource = new ByteArrayResource(fileData);
 
             return ResponseEntity.ok()
@@ -238,7 +239,29 @@ public class SemesterProjectServiceImpl implements SemesterProjectService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(null);
         }
+    }*/
+
+    @Override
+    public ResponseEntity<ByteArrayResource> downloadFile(Integer semesterProjectId) {
+        Optional<SemesterProject> semesterProjectOptional = semesterProjectRepository.findById(semesterProjectId);
+        if (semesterProjectOptional.isPresent()) {
+            SemesterProject semesterProject = semesterProjectOptional.get();
+            try {
+                Blob fileData = semesterProject.getFileData();
+                byte[] fileBytes = fileData.getBytes(1, (int) fileData.length());
+                ByteArrayResource resource = new ByteArrayResource(fileBytes);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDisposition(ContentDisposition.attachment().filename(semesterProject.getFileName()).build());
+                return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(null);
     }
+
 
     @Override
     public ResponseEntity<List<SemesterProjectWrapper>> getSemestersForTeacher(Integer id) {
@@ -260,7 +283,6 @@ public class SemesterProjectServiceImpl implements SemesterProjectService {
         }
     }
 
-    //musím tu pridať ešte id z current Usera....
     @Override
     public ResponseEntity<List<SemesterProjectWrapper>> getSemestersByCurrentUser() {
         try {
@@ -286,6 +308,7 @@ public class SemesterProjectServiceImpl implements SemesterProjectService {
         try {
             Integer userId = getCurrentUserId();
             List<SemesterProjectWrapper> semesters = semesterProjectRepository.getSemesterProjectsForStudent(userId);
+
             if (semesters != null && !semesters.isEmpty()) {
                 return new ResponseEntity<List<SemesterProjectWrapper>>(semesters, HttpStatus.OK);
             } else {
@@ -297,7 +320,7 @@ public class SemesterProjectServiceImpl implements SemesterProjectService {
         }
     }
 
-    public Optional<byte[]> getFileData(Integer semesterProjectId) {
+    public Optional<Blob> getFileData(Integer semesterProjectId) {
         Optional<SemesterProject> semesterProjectOptional = semesterProjectRepository.findById(semesterProjectId);
         if (semesterProjectOptional.isPresent()) {
             SemesterProject semesterProject = semesterProjectOptional.get();
@@ -323,18 +346,20 @@ public class SemesterProjectServiceImpl implements SemesterProjectService {
 
 
     @Override
-    public ResponseEntity<String> uploadFile(Integer semesterProjectId, MultipartFile file) {
+    public ResponseEntity<String> uploadFile(Integer semesterProjectId, MultipartFile fileData) {
         //Integer semesterProjectId = Integer.valueOf(requestMap.get("id"));
         //String base64File = requestMap.get("file");
-        if (file.isEmpty()) {
+        if (fileData.isEmpty()) {
             return PortalUtils.getResponseEntity("Súbor je prázdny.", HttpStatus.BAD_REQUEST);
         }
         try {
-            //byte[] fileBytes = Base64.getDecoder().decode(base64File);
+            String fileName = fileData.getOriginalFilename();
             Optional<SemesterProject> semesterProjectOptional = this.semesterProjectRepository.findById(semesterProjectId);
             if (semesterProjectOptional.isPresent()) {
                 SemesterProject semesterProject = semesterProjectOptional.get();
-                semesterProject.setFileData(file.getBytes());
+                Blob fileBlob = new SerialBlob(fileData.getBytes());
+                semesterProject.setFileData(fileBlob);
+                semesterProject.setFileName(fileName);
                 this.semesterProjectRepository.save(semesterProject);
                 return PortalUtils.getResponseEntity("Súbor bol úspešne nahraný.", HttpStatus.OK);
             } else {

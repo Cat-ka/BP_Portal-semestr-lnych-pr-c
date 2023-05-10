@@ -1,18 +1,23 @@
 package com.portal.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.File;
 import java.io.Serializable;
+import java.sql.Blob;
 import java.time.LocalDate;
 
 @Entity
 @Data
 @DynamicUpdate
 @DynamicInsert
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "semester")
 public class SemesterProject implements Serializable {
 
@@ -57,16 +62,17 @@ public class SemesterProject implements Serializable {
     private User user;
 
     @Lob
-    @Column(name = "file", columnDefinition = "LONGBLOB")
-    private byte[] fileData;
+    @Column(name = "fileData", columnDefinition = "LONGBLOB")
+    private Blob fileData;
+
+    @Column(name = "fileName")
+    private String fileName;
 
 
-    public SemesterProject() {
-    }
-
-    public SemesterProject(Integer id, byte[] fileData) {
+    public SemesterProject(Integer id, Blob fileData, String fileName) {
         this.id = id;
         this.fileData = fileData;
+        this.fileName = fileName;
     }
 
     public SemesterProject(String name, String description, String createdBy, String status, LocalDate term, Subject subject) {
@@ -87,11 +93,34 @@ public class SemesterProject implements Serializable {
         this.available = available;
         this.status = status;
         this.term = term;
-        this.subject = subject;
+        this.subject = subjectId;
     }
 
     public boolean isAvailable() {
         return this.available;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Blob getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(Blob fileData) {
+        this.fileData = fileData;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 }
