@@ -6,4 +6,5 @@ public class PortalConstants {
     public static final String INVALID_DATA = "Invalid Data.";
     public static final String UNAUTHORIZED_ACCESS = "Unauthorized access.";
     public static final String STORE_LOCATION = "D:\\Praca\\Portal\\src\\main\\resources\\stored-files";
+    public static final String STORE_LOCATION_DIRECTORY = System.getProperty("user.home") + "/Downloads/uploads/";
 }

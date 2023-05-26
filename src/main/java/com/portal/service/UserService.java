@@ -31,4 +31,6 @@ public interface UserService {
     ResponseEntity<List<UserWrapper>> getAllTechersWrap();
 
     ResponseEntity<String> getNameCurrentUser();
+
+    ResponseEntity<UserWrapper> getCurrentUserInfo();
 }

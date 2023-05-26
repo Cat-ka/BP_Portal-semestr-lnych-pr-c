@@ -50,4 +50,7 @@ public interface UserController {
 
     @GetMapping(path = "/profile")
     public ResponseEntity<String> getCurrentUser();
+
+    @GetMapping(path="/getCurrentUserInfo")
+    public ResponseEntity<UserWrapper> getCurrentUserInfo();
 }

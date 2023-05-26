@@ -1,5 +1,6 @@
 package com.portal.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
@@ -67,6 +69,10 @@ public class SemesterProject implements Serializable {
 
     @Column(name = "fileName")
     private String fileName;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "semesterProject")
+    private List<SemesterFile> files;
 
 
     public SemesterProject(Integer id, Blob fileData, String fileName) {

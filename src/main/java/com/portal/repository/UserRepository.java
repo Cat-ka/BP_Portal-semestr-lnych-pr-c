@@ -42,6 +42,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u.email from User u where u.role='admin'")
     List<String> getAllAdmins();
 
+    @Query("SELECT new com.portal.wrapper.UserWrapper(u.id, CONCAT(u.firstName, ' ', u.lastName) AS name, " +
+            "u.email, u.status, u.role) FROM User u WHERE u.email = :email")
+    UserWrapper getCurrentUserInfo(@Param("email") String email);
+
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.status = :status WHERE u.id =:id")

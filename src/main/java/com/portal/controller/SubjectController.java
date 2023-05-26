@@ -25,5 +25,6 @@ public interface SubjectController {
     @GetMapping(path = "/get/{id}")
     ResponseEntity<Map<String, Object>> getSubjectById(@PathVariable Integer id);
 
+
 }
 

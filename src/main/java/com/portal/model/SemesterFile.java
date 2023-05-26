@@ -1,5 +1,6 @@
 package com.portal.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,10 @@ public class SemesterFile {
     @Column(name = "file_data")
     private byte[] fileData;
 
+    @Column(name = "type")
+    private String type;
+
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "semester_project_id", nullable = false)
     private SemesterProject semesterProject;

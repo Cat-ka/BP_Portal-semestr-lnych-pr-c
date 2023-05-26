@@ -334,6 +334,7 @@ public class SemesterProjectServiceImpl implements SemesterProjectService {
         String email = jwtFilter.getCurrentUser();
         User user = userRepository.findByEmail(email);
         Integer userId = user.getId();
+        String name = user.getFullName();
         return PortalUtils.getResponseEntity(String.valueOf(userId), HttpStatus.OK);
     }
 

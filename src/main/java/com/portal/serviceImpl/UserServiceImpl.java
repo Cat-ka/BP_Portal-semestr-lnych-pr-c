@@ -163,6 +163,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<UserWrapper> getCurrentUserInfo() {
+        try {
+            String userEmail = jwtFilter.getCurrentUser();
+            return new ResponseEntity<>(userRepository.getCurrentUserInfo(userEmail), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return new ResponseEntity<>(new UserWrapper(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
     public ResponseEntity<String> updateStatus(Map<String, String> requestMap) {
         try {
             if (jwtFilter.isAdmin()) {

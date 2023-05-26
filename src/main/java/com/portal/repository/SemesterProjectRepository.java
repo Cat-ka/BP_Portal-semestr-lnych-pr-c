@@ -38,9 +38,18 @@ public interface SemesterProjectRepository extends JpaRepository<SemesterProject
     //tu by bolo dobré dať podmienku že createdById = currentUserId
     @Query(value = "SELECT new com.portal.wrapper.SemesterProjectWrapper (s.id, s.name, s.description, " +
             "s.term, s.status, s.createdById, s.createdBy, s.available, s.subject.id, s.subject.name, s.user.id, " +
-            "CONCAT(s.user.firstName, ' ', s.user.lastName)) AS fullName FROM SemesterProject s LEFT JOIN s.user u " +
+            "CONCAT(s.user.firstName, ' ', s.user.lastName)), s.fileName AS fullName, s.fileName  FROM SemesterProject s LEFT JOIN s.user u " +
             "WHERE s.createdById = :currentUserId")
     List<SemesterProjectWrapper> getSemestersByCurrentUser(@Param("currentUserId") Integer userId);
+
+    //pridané fileName a fileData
+//    @Query(value = "SELECT new com.portal.wrapper.SemesterProjectWrapper (s.id, s.name, s.description, " +
+//            "s.term, s.status, s.createdById, s.createdBy, s.available, s.subject.id, s.subject.name, s.user.id, " +
+//            "CONCAT(s.user.firstName, ' ', s.user.lastName), f.fileName, f.fileData) " +
+//            "FROM SemesterProject s LEFT JOIN s.user u LEFT JOIN s.files f " +
+//            "WHERE s.createdById = :currentUserId")
+//    List<SemesterProjectWrapper> getSemestersByCurrentUser(@Param("currentUserId") Integer userId);
+
 
     //Vyberie všetky semestrálne práce na ktoré je prihlásený momentálne prihlásený používateľ
     @Query(value = "SELECT new com.portal.wrapper.SemesterProjectWrapper(s.id, s.name, s.description, s.term, s.status, " +
@@ -52,7 +61,7 @@ public interface SemesterProjectRepository extends JpaRepository<SemesterProject
 
     @Query(value = "SELECT new com.portal.wrapper.SemesterProjectWrapper (s.id, s.name, s.description, " +
             "s.term, s.status, s.createdById, s.createdBy, s.available, s.subject.id, s.subject.name, s.user.id, " +
-            "CONCAT(s.user.firstName, ' ', s.user.lastName)) AS fullName FROM SemesterProject s" +
+            "CONCAT(s.user.firstName, ' ', s.user.lastName)) AS fullName, s.fileName FROM SemesterProject s" +
             " LEFT JOIN s.user where s.status = 'true' AND s.id = :id")
     SemesterProjectWrapper getPublishedProjectById(@Param("id") Integer id);
 

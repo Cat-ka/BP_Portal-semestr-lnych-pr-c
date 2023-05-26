@@ -87,5 +87,25 @@ public class SemesterProjectWrapper {
         this.fileName = fileName;
     }
 
+    public SemesterProjectWrapper(Integer id, String name, String description, LocalDate term, Integer createdById,
+                                  String createdBy, Boolean available, Integer subjectId,
+                                  String subjectName, Integer userId, String userFirstName, String userLastName,
+                                  String userFullName, String fileName) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.createdById = createdById;
+        this.createdBy = createdBy;
+        this.term = String.valueOf(term);
+        this.available = available;
+        this.subjectId = subjectId;
+        this.subjectName = subjectName;
+        this.userId = userId;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.userFullName = userFullName;
+        this.fileName = fileName;
+    }
+
 }
 
